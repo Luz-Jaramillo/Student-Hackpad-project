@@ -1,0 +1,290 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d79f6e;
+    padding: 20px;
+}
+
+.home {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 20px;
+}
+
+/* Title - spans all columns at top */
+.home-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ad5c37;
+}
+
+/* To-do list - left column */
+#todo-section {
+    grid-column: 1;
+    grid-row: 2 / 5;
+    border: 1px solid #dabd44;
+    padding: 20px;
+    background: #eee9b1;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: #dbbc49;
+}
+
+#todo-section h2 {
+    margin-bottom: 15px;
+    color: #dbbc49;
+}
+
+#todo-list {
+    color: #dbbc49;
+}
+
+#todo-stats {
+    color: #dbbc49 !important;
+}
+
+/* Classes - middle column */
+#classes-section {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    border: 1px solid #4e4db5;
+    padding: 20px;
+    background: #9faada;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#classes-section h2 {
+    margin-bottom: 15px;
+    color: #4e4db5;
+}
+
+/* Pomodoro - below classes in middle */
+.Pomodoro {
+    grid-column: 2;
+    grid-row: 4;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.Pomodoro h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Calendar and Schedule - right column */
+.Calendar {
+    grid-column: 3;
+    grid-row: 2;
+    border: 1px solid #7e7f89;
+    padding: 20px;
+    background: #dbdade;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.Calendar h2 {
+    margin-bottom: 15px;
+    color: #7e7f89;
+}
+
+#schedule-view {
+    grid-column: 3;
+    grid-row: 3 / 5;
+    border: 1px solid #7e7f89;
+    padding: 20px;
+    background: #dbdade;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+/* Shared styles for form sections */
+.todo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.classes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Form inputs styling */
+input[type="text"],
+input[type="time"],
+input[type="number"],
+textarea,
+input[type="range"] {
+    padding: 8px;
+    border: 1px solid #dcbc46;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+button {
+    padding: 8px 12px;
+    background-color: #dcbc46;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+button:hover {
+    background-color: #4e4db5;
+}
+
+/* Classes modal buttons */
+#classes-form .btn,
+#classes-close-btn {
+    background-color: #4e4db5 !important;
+    color: white !important;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#classes-form .btn:hover,
+#classes-close-btn:hover {
+    background-color: #3938a0 !important;
+}
+
+/* Classes modal background color */
+#classes-modal > div {
+    background: #9faada !important;
+}
+
+/* Delete button in classes list */
+#classes-list button {
+    background: #fff !important;
+    color: #4e4db5 !important;
+    border: 2px solid #4e4db5;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#classes-list button:hover {
+    background: #4e4db5 !important;
+    color: #fff !important;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1200px) {
+    .home {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    #todo-section {
+        grid-column: 1;
+        grid-row: 2 / 4;
+    }
+    
+    #classes-section {
+        grid-column: 2;
+        grid-row: 2;
+    }
+    
+    .Pomodoro {
+        grid-column: 2;
+        grid-row: 3;
+    }
+    
+    .Calendar {
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+    
+    #schedule-view {
+        grid-column: 1 / -1;
+        grid-row: 5;
+    }
+}
+/* classes modal — text and slider thumb color */
+#classes-modal,
+#classes-modal > div,
+#classes-modal h3,
+#classes-modal label,
+#classes-modal input,
+#classes-modal textarea,
+#classes-modal select {
+    color: #4e4db5 !important;
+}
+
+#classes-modal button {
+    color: #4e4db5 !important;
+}
+
+#classes-modal input[type="range"]::-webkit-slider-thumb {
+    background: #4e4db5;
+}
+
+#classes-modal input[type="range"]::-moz-range-thumb {
+    background: #4e4db5;
+}
+
+#classes-modal input[type="range"]::-ms-thumb {
+    background: #4e4db5;
+}
+
+/* Schedule modal (calendar) buttons */
+#schedule-modal > div button,
+#save-morning-btn,
+#save-school-btn,
+#save-night-btn,
+#view-schedule-btn {
+    background-color: #7e7f89 !important;
+    color: white !important;
+}
+
+#schedule-modal > div button:hover,
+#save-morning-btn:hover,
+#save-school-btn:hover,
+#save-night-btn:hover,
+#view-schedule-btn:hover {
+    background-color: #5f6069 !important;
+}
+
+/* Schedule modal (calendar) — text color and slider thumb only */
+#schedule-modal,
+#schedule-modal > div,
+#schedule-modal h3,
+#schedule-modal h4,
+#schedule-modal label,
+#schedule-modal input,
+#schedule-modal textarea,
+#schedule-modal select {
+    color: #7e7f89 !important;
+}
+
+#schedule-modal input[type="range"]::-webkit-slider-thumb {
+    background: #7e7f89;
+}
+
+#schedule-modal input[type="range"]::-moz-range-thumb {
+    background: #7e7f89;
+}
+
+#schedule-modal input[type="range"]::-ms-thumb {
+    background: #7e7f89;
+}
+

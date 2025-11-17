@@ -1,0 +1,41 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;  /* center left-right */
+    align-items: center;      /* center top-bottom */
+    background-color: #d79f6e;
+    font-family: Arial, sans-serif;
+}
+.center-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* <-- THIS stacks everything vertically */
+    align-items: center;    /* centers them horizontally */
+    gap: 15px; 
+}
+#signupForm {
+    display: flex;
+    flex-direction: column; /* stacks inputs vertically */
+    gap: 10px;              /* spacing between inputs */
+    width: 300px;           /* same width for all inputs */
+}
+.btn {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #ad5c37;   /* ← change this */
+    color: white;                /* text color */
+}
+.form-title {
+    color: #ad5c37; /* change this to any color you like */
+    text-align: center; /* keeps it centered */
+    font-size: 32px;    /* optional: change size */
+    font-weight: bold;  /* optional: make it bold */
+}

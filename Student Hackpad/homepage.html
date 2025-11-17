@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="styleh.css">
+</head>
+<body>
+    <div class="home">
+        <div class="home-title">Home</div>
+        
+        <section id="todo-section" class="todo">
+            <h2>To-do</h2>
+            <form id="todo-form" aria-label="Add todo">
+                <input id="todo-input" type="text" placeholder="Add a task..." autocomplete="off" />
+                <button type="submit">Add</button>
+            </form>
+            <div id="todo-stats" style="margin:6px 0;font-size:0.95rem;color:#333;"></div>
+            <ul id="todo-list" style="list-style:none;padding:0;margin:0;">
+                <!-- tasks injected here -->
+            </ul>
+        </section>
+
+        <section id="classes-section" class="classes">
+            <h2 id="classes-heading" style="cursor: pointer; text-decoration: underline;">Classes</h2>
+            <div id="classes-list" style="margin-top: 10px;"></div>
+        </section>
+
+        <div class="Calendar">
+            <h2 id="calendar-heading" style="cursor: pointer; text-decoration: underline;">Calendar</h2>
+        </div>
+
+        <div id="schedule-view" style="display:none;">
+            <div id="schedule-content"></div>
+        </div>
+
+        <div class="Pomodoro">
+            <h2 id="pomodoro-heading" style="cursor: pointer; text-decoration: underline;">Pomodoro Timer</h2>
+            <div id="pomodoro-widget" style="margin-top: 10px; display:none; border:1px solid #ddd; padding:15px; border-radius:8px; background:#f9f9f9; text-align:center;">
+                <div id="timer-display" style="font-size:3em; font-weight:bold; margin:15px 0; font-family:monospace; color:#333;">25:00</div>
+                <div id="session-label" style="font-size:1.1em; margin-bottom:15px; color:#666;">Work Session</div>
+                <div style="display:flex; gap:10px; justify-content:center; margin-bottom:15px;">
+                    <button id="start-btn" style="background:#4CAF50; color:white; border:none; padding:10px 15px; border-radius:4px; cursor:pointer;">Start</button>
+                    <button id="pause-btn" style="background:#ff9800; color:white; border:none; padding:10px 15px; border-radius:4px; cursor:pointer;">Pause</button>
+                    <button id="reset-btn" style="background:#f44336; color:white; border:none; padding:10px 15px; border-radius:4px; cursor:pointer;">Reset</button>
+                </div>
+                <div id="pomodoro-stats" style="font-size:0.9rem; color:#666; margin-bottom:10px;">Sessions completed: <span id="sessions-count">0</span></div>
+                <div style="margin-top:10px;">
+                    <label style="display:inline-block; margin-right:15px;">
+                        Work (mins): <input id="work-duration" type="number" min="1" max="60" value="25" style="width:50px; padding:4px;"/>
+                    </label>
+                    <label style="display:inline-block;">
+                        Break (mins): <input id="break-duration" type="number" min="1" max="30" value="5" style="width:50px; padding:4px;"/>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Classes Modal -->
+    <div id="classes-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:8px; width:90%; max-width:500px;">
+            <h3>Add a Class</h3>
+            <form id="classes-form">
+                <div style="margin-bottom:12px;">
+                    <label for="class-name" style="display:block; margin-bottom:4px;">Class Name:</label>
+                    <input id="class-name" type="text" placeholder="e.g., Biology 101" required style="width:100%; padding:8px; box-sizing:border-box;"/>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label for="class-overview" style="display:block; margin-bottom:4px;">Overview:</label>
+                    <textarea id="class-overview" placeholder="Brief description..." style="width:100%; padding:8px; box-sizing:border-box; height:80px;"></textarea>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label for="class-time" style="display:block; margin-bottom:4px;">Study Duration (minutes): <span id="time-value">30</span></label>
+                    <input id="class-time" type="range" min="30" max="90" step="5" value="30" style="width:100%;" />
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="submit" class="btn" style="flex:1;">Add Class</button>
+                    <button type="button" id="classes-close-btn" style="flex:1; background:#ccc; padding:8px; border:none; cursor:pointer; border-radius:4px;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Modal -->
+    <div id="schedule-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; overflow-y:auto; padding:20px 0;">
+        <div style="background:white; margin:20px auto; padding:20px; border-radius:8px; width:90%; max-width:600px;">
+            <h3>Manage Your Schedule</h3>
+            <div style="margin-bottom:20px;">
+                <h4>Morning Routine</h4>
+                <div>
+                    <label style="display:block; margin-bottom:4px;">Duration (hours): <span id="morning-duration-value">0.5</span></label>
+                    <input id="morning-duration" type="range" min="0.25" max="2" step="0.25" value="0.5" style="width:100%;" />
+                </div>
+                <div style="margin-top:10px;">
+                    <label style="display:block; margin-bottom:6px;">Daily Morning Tasks</label>
+                    <form id="morning-task-form" style="display:flex; gap:8px; margin-bottom:8px;">
+                        <input id="morning-task-input" type="text" placeholder="Add morning task (e.g., Exercise)" style="flex:1; padding:8px; box-sizing:border-box;" />
+                        <button id="add-morning-task" type="submit" style="padding:8px 10px;">Add</button>
+                    </form>
+                    <ul id="morning-task-list" style="list-style:none; padding:0; margin:0; max-height:120px; overflow:auto;"></ul>
+                </div>
+                <button type="button" id="save-morning-btn" style="background:#4CAF50; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; margin-top:8px;">Save Morning Routine</button>
+            </div>
+
+            <div style="margin-bottom:20px; border-top:1px solid #ddd; padding-top:20px;">
+                <h4>School Hours</h4>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div>
+                        <label style="display:block; margin-bottom:4px;">Start Time:</label>
+                        <input id="school-start" type="time" style="width:100%; padding:8px; box-sizing:border-box;"/>
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:4px;">End Time:</label>
+                        <input id="school-end" type="time" style="width:100%; padding:8px; box-sizing:border-box;"/>
+                    </div>
+                </div>
+                <button type="button" id="save-school-btn" style="background:#4CAF50; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; margin-top:8px;">Save School Hours</button>
+            </div>
+
+            <div style="margin-bottom:20px; border-top:1px solid #ddd; padding-top:20px;">
+                <h4>Night Routine</h4>
+                <div>
+                    <label style="display:block; margin-bottom:4px;">What do you do? (e.g., Read, Meditate)</label>
+                    <input id="night-routine-text" type="text" placeholder="e.g., Read & wind down" style="width:100%; padding:8px; box-sizing:border-box; margin-bottom:8px;"/>
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:4px;">Sleep Time:</label>
+                    <input id="sleep-time" type="time" value="23:00" style="width:100%; padding:8px; box-sizing:border-box; margin-bottom:8px;" />
+                </div>
+                <div>
+                    <label style="display:block; margin-bottom:4px;">Duration (hours): <span id="night-duration-value">1</span></label>
+                    <input id="night-duration" type="range" min="0.5" max="2" step="0.25" value="1" style="width:100%;" />
+                </div>
+                <button type="button" id="save-night-btn" style="background:#4CAF50; color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; margin-top:8px;">Save Night Routine</button>
+            </div>
+
+            <div id="schedule-warnings" style="margin-top:20px; padding:12px; background:#fff3cd; border:1px solid #ffc107; border-radius:4px; display:none;"></div>
+
+            <div style="margin-top:20px; display:flex; gap:10px;">
+                <button type="button" id="view-schedule-btn" style="flex:1; background:#2196F3; color:white; border:none; padding:10px; border-radius:4px; cursor:pointer;">View Weekly Schedule</button>
+                <button type="button" id="schedule-close-btn" style="flex:1; background:#ccc; padding:10px; border:none; cursor:pointer; border-radius:4px;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day Selection Modal for Classes -->
+    <div id="day-selection-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+        <div style="background:white; padding:20px; border-radius:8px; width:90%; max-width:500px; max-height:80vh; overflow-y:auto;">
+            <h3>Select Days to Schedule</h3>
+            <p id="day-selection-class-name" style="font-weight:bold; margin-bottom:15px;"></p>
+            <div id="day-selection-days" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:10px; margin-bottom:15px;"></div>
+            <div id="day-selection-warnings" style="margin-bottom:15px; padding:12px; background:#fff3cd; border:1px solid #ffc107; border-radius:4px; display:none;"></div>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button type="button" id="day-selection-confirm-btn" style="flex:1; background:#4e4db5; color:white; border:none; padding:10px; border-radius:4px; cursor:pointer;">Confirm</button>
+                <button type="button" id="day-selection-cancel-btn" style="flex:1; background:#ccc; color:#333; border:none; padding:10px; border-radius:4px; cursor:pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        const STORAGE_KEY = 'todoTasks';
+        const form = document.getElementById('todo-form');
+        const input = document.getElementById('todo-input');
+        const list = document.getElementById('todo-list');
+        const stats = document.getElementById('todo-stats');
+
+        function loadTasks(){
+            try{
+                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            }catch(e){ return []; }
+        }
+
+        function saveTasks(tasks){
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        }
+
+        function instantiateRecurringTodos(){
+            try{
+                const schedule = JSON.parse(localStorage.getItem('schedule') || '{}');
+                const todos = loadTasks();
+                const todayKey = new Date().toISOString().slice(0,10);
+
+                // morning tasks
+                const morningTasks = (schedule.morning && schedule.morning.tasks) || [];
+                morningTasks.forEach(mt => {
+                    const text = `Morning: ${mt}`;
+                    const exists = todos.some(t => t._recurring === 'morning' && t._date === todayKey && t.text === text);
+                    if(!exists){
+                        todos.push({ text, done:false, createdAt: Date.now(), _recurring:'morning', _date: todayKey });
+                    }
+                });
+
+                // night task
+                const nightText = schedule.night?.text || 'Night Routine';
+                const nightTaskText = `Night: ${nightText}`;
+                const existsNight = todos.some(t => t._recurring === 'night' && t._date === todayKey && t.text === nightTaskText);
+                if(!existsNight){
+                    todos.push({ text: nightTaskText, done:false, createdAt: Date.now(), _recurring:'night', _date: todayKey });
+                }
+
+                saveTasks(todos);
+            }catch(e){ console.warn('instantiateRecurringTodos failed', e); }
+        }
+
+        function render(){
+            const tasks = loadTasks();
+            list.innerHTML = '';
+            if(tasks.length === 0){
+                list.innerHTML = '<li style="color:#666;padding:6px 0">No tasks yet</li>';
+            } else {
+                tasks.forEach((t, idx) => {
+                    const li = document.createElement('li');
+                    li.style.padding = '6px 0';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = !!t.done;
+                    checkbox.style.marginRight = '8px';
+                    checkbox.addEventListener('change', () => {
+                        tasks[idx].done = checkbox.checked;
+                        saveTasks(tasks);
+                        render();
+                    });
+
+                    const span = document.createElement('span');
+                    span.textContent = t.text;
+                    span.style.marginRight = '12px';
+                    if(t.done) span.style.textDecoration = 'line-through';
+
+                    const del = document.createElement('button');
+                    del.textContent = 'Delete';
+                    del.style.marginLeft = '6px';
+                    del.addEventListener('click', () => {
+                        tasks.splice(idx,1);
+                        saveTasks(tasks);
+                        render();
+                    });
+
+                    li.appendChild(checkbox);
+                    li.appendChild(span);
+                    li.appendChild(del);
+                    list.appendChild(li);
+                });
+            }
+
+            const total = tasks.length;
+            const remaining = tasks.filter(t=>!t.done).length;
+            stats.textContent = `${remaining} remaining / ${total} total`;
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = input.value.trim();
+            if(!text) return;
+            const tasks = loadTasks();
+            tasks.push({ text, done: false, createdAt: Date.now() });
+            saveTasks(tasks);
+            input.value = '';
+            render();
+        });
+
+    // init
+    instantiateRecurringTodos();
+    render();
+    })();
+
+    // Classes modal logic
+    (function(){
+        const STORAGE_KEY = 'classes';
+        const modal = document.getElementById('classes-modal');
+        const heading = document.getElementById('classes-heading');
+        const closeBtn = document.getElementById('classes-close-btn');
+        const form = document.getElementById('classes-form');
+        const classList = document.getElementById('classes-list');
+        const timeInput = document.getElementById('class-time');
+        const timeValue = document.getElementById('time-value');
+
+        const daySelectionModal = document.getElementById('day-selection-modal');
+        const daySelectionDays = document.getElementById('day-selection-days');
+        const daySelectionWarnings = document.getElementById('day-selection-warnings');
+        const daySelectionConfirmBtn = document.getElementById('day-selection-confirm-btn');
+        const daySelectionCancelBtn = document.getElementById('day-selection-cancel-btn');
+        const daySelectionClassName = document.getElementById('day-selection-class-name');
+
+        let pendingClass = null;
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const dayAbbrev = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        let selectedDays = {};
+
+        timeInput.addEventListener('input', () => {
+            timeValue.textContent = timeInput.value;
+        });
+
+        heading.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            form.reset();
+            document.getElementById('time-value').textContent = '30';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal){
+                modal.style.display = 'none';
+                form.reset();
+                document.getElementById('time-value').textContent = '30';
+            }
+        });
+
+        function loadClasses(){
+            try{
+                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            }catch(e){ return []; }
+        }
+
+        function saveClasses(classes){
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(classes));
+        }
+
+        function getScheduleData(){
+            try{
+                return JSON.parse(localStorage.getItem('schedule') || '{}');
+            }catch(e){ return {}; }
+        }
+
+        function checkDayAvailability(dayIndex) {
+            const schedule = getScheduleData();
+            const schoolStart = schedule.school?.start || '09:00';
+            const schoolEnd = schedule.school?.end || '15:00';
+            const nightDur = schedule.night?.duration || 1;
+
+            const [sh, sm] = schoolStart.split(':').map(Number);
+            const [eh, em] = schoolEnd.split(':').map(Number);
+            const schoolEndHour = eh + em/60;
+
+            // Class starts 1 hour after school ends
+            const classStartHour = schoolEndHour + 1;
+            const classEndHour = classStartHour + (timeInput.value / 60);
+
+            // Night routine starts at (based on sleep time)
+            const sleepParts = (schedule.sleepTime || '23:00').split(':').map(Number);
+            const sleepStart = (sleepParts[0] || 23) + (sleepParts[1]||0)/60;
+            const nightStartHour = sleepStart - nightDur;
+
+            return classEndHour <= nightStartHour && classStartHour < 24;
+        }
+
+        function showDaySelectionModal(classData) {
+            pendingClass = classData;
+            selectedDays = {};
+            daySelectionClassName.textContent = `${classData.name} - ${classData.time} minutes`;
+
+            daySelectionDays.innerHTML = '';
+            days.forEach((day, idx) => {
+                const label = document.createElement('label');
+                label.style.cssText = 'display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px; background:#f5f5f5; border-radius:4px; border:2px solid transparent;';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.dataset.day = idx;
+                checkbox.style.cssText = 'cursor:pointer;';
+
+                const span = document.createElement('span');
+                span.textContent = dayAbbrev[idx];
+                span.style.cssText = 'font-weight:bold;';
+
+                checkbox.addEventListener('change', () => {
+                    if(!checkDayAvailability(idx)) {
+                        checkbox.checked = false;
+                        alert(`${day} is full! No available time between school+1hr and night routine.`);
+                        return;
+                    }
+                    selectedDays[idx] = checkbox.checked;
+                    label.style.borderColor = checkbox.checked ? '#4e4db5' : 'transparent';
+                    label.style.background = checkbox.checked ? '#e8e5f5' : '#f5f5f5';
+                });
+
+                label.appendChild(checkbox);
+                label.appendChild(span);
+                daySelectionDays.appendChild(label);
+            });
+
+            daySelectionModal.style.display = 'flex';
+        }
+
+        daySelectionConfirmBtn.addEventListener('click', () => {
+            if(Object.keys(selectedDays).filter(k => selectedDays[k]).length === 0) {
+                alert('Please select at least one day.');
+                return;
+            }
+
+            const classesToAdd = loadClasses();
+            pendingClass.days = Object.keys(selectedDays).filter(k => selectedDays[k]).map(Number);
+            classesToAdd.push(pendingClass);
+            saveClasses(classesToAdd);
+
+            form.reset();
+            document.getElementById('time-value').textContent = '30';
+            modal.style.display = 'none';
+            daySelectionModal.style.display = 'none';
+            renderClasses();
+            if(window.renderScheduleView) window.renderScheduleView();
+        });
+
+        daySelectionCancelBtn.addEventListener('click', () => {
+            daySelectionModal.style.display = 'none';
+        });
+
+        function renderClasses(){
+            const classes = loadClasses();
+            classList.innerHTML = '';
+            if(classes.length === 0){
+                classList.innerHTML = '<p style="color:#666;">No classes yet. Click above to add one.</p>';
+            } else {
+                classes.forEach((c, idx) => {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'border:1px solid #ddd; padding:12px; margin-bottom:10px; border-radius:4px; background:#f9f9f9;';
+                    
+                    const titleDiv = document.createElement('div');
+                    titleDiv.style.cssText = 'font-weight:bold; margin-bottom:6px;';
+                    titleDiv.textContent = c.name;
+                    
+                    const overviewDiv = document.createElement('div');
+                    overviewDiv.style.cssText = 'font-size:0.9rem; color:#555; margin-bottom:6px;';
+                    overviewDiv.textContent = c.overview || '(no overview)';
+                    
+                    const detsDiv = document.createElement('div');
+                    detsDiv.style.cssText = 'font-size:0.85rem; color:#666; margin-bottom:8px;';
+                    const scheduledDays = c.days && c.days.length > 0 ? c.days.map(d => dayAbbrev[d]).join(', ') : 'Not scheduled';
+                    detsDiv.textContent = `Duration: ${c.time} min | Scheduled: ${scheduledDays}`;
+                    
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = 'Delete';
+                    delBtn.style.cssText = 'background:#ff6b6b; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;';
+                    delBtn.addEventListener('click', () => {
+                        classes.splice(idx, 1);
+                        saveClasses(classes);
+                        renderClasses();
+                    });
+                    
+                    div.appendChild(titleDiv);
+                    div.appendChild(overviewDiv);
+                    div.appendChild(detsDiv);
+                    div.appendChild(delBtn);
+                    classList.appendChild(div);
+                });
+            }
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('class-name').value.trim();
+            const overview = document.getElementById('class-overview').value.trim();
+            const time = parseInt(document.getElementById('class-time').value);
+
+            if(!name) return;
+
+            const classData = { name, overview, time, createdAt: Date.now(), days: [] };
+            modal.style.display = 'none';
+            showDaySelectionModal(classData);
+        });
+
+        // init
+        renderClasses();
+    })();
+
+    // Schedule/Calendar logic
+    (function(){
+        const STORAGE_KEY = 'schedule';
+        const modal = document.getElementById('schedule-modal');
+        const heading = document.getElementById('calendar-heading');
+        const closeBtn = document.getElementById('schedule-close-btn');
+        const viewScheduleBtn = document.getElementById('view-schedule-btn');
+    const morningDurationInput = document.getElementById('morning-duration');
+    const nightDurationInput = document.getElementById('night-duration');
+    const morningDurationValue = document.getElementById('morning-duration-value');
+    const nightDurationValue = document.getElementById('night-duration-value');
+    const morningTaskForm = document.getElementById('morning-task-form');
+    const morningTaskInput = document.getElementById('morning-task-input');
+    const morningTaskList = document.getElementById('morning-task-list');
+        const saveMorningBtn = document.getElementById('save-morning-btn');
+        const saveSchoolBtn = document.getElementById('save-school-btn');
+        const saveNightBtn = document.getElementById('save-night-btn');
+        const scheduleWarnings = document.getElementById('schedule-warnings');
+
+        morningDurationInput.addEventListener('input', () => {
+            morningDurationValue.textContent = morningDurationInput.value;
+        });
+
+        nightDurationInput.addEventListener('input', () => {
+            nightDurationValue.textContent = nightDurationInput.value;
+        });
+
+        heading.addEventListener('click', () => {
+            loadScheduleData();
+            modal.style.display = 'block';
+            renderScheduleView(); // also render the inline schedule when modal opens
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal){
+                modal.style.display = 'none';
+            }
+        });
+
+        function loadScheduleData(){
+            try{
+                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            }catch(e){ return {}; }
+        }
+
+        function saveScheduleData(data){
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function getOrCreateScheduleData(){
+            const base = loadScheduleData() || {};
+            // ensure morning.tasks exists so we can treat it like a repeating todo
+            base.morning = base.morning || { text: '', duration: 0.5, tasks: [] };
+            base.morning.tasks = Array.isArray(base.morning.tasks) ? base.morning.tasks : [];
+            base.school = base.school || { start: '09:00', end: '15:00' };
+            base.night = base.night || { text: '', duration: 1 };
+            base.sleepTime = base.sleepTime || '23:00';
+            return base;
+        }
+
+        // Populate form from storage
+        function populateForm(){
+            const data = getOrCreateScheduleData();
+            // morning tasks
+            // document.getElementById('morning-routine-text').value = data.morning?.text || '';
+            document.getElementById('morning-duration').value = data.morning?.duration || 0.5;
+            document.getElementById('morning-duration-value').textContent = data.morning?.duration || 0.5;
+            renderMorningTasks();
+            document.getElementById('school-start').value = data.school?.start || '09:00';
+            document.getElementById('school-end').value = data.school?.end || '15:00';
+            document.getElementById('night-routine-text').value = data.night?.text || '';
+            document.getElementById('sleep-time').value = data.sleepTime || '23:00';
+            document.getElementById('night-duration').value = data.night?.duration || 1;
+            document.getElementById('night-duration-value').textContent = data.night?.duration || 1;
+        }
+
+        saveMorningBtn.addEventListener('click', () => {
+            const data = getOrCreateScheduleData();
+            data.morning = data.morning || { tasks: [] };
+            // duration is the important part here; tasks are managed separately
+            data.morning.duration = parseFloat(document.getElementById('morning-duration').value);
+            saveScheduleData(data);
+            alert('Morning routine saved!');
+            validateSchedule();
+            if(window.renderScheduleView) window.renderScheduleView();
+        });
+
+        // Morning tasks: add/remove and render
+        function renderMorningTasks(){
+            const data = getOrCreateScheduleData();
+            morningTaskList.innerHTML = '';
+            const tasks = data.morning?.tasks || [];
+            if(tasks.length === 0){
+                morningTaskList.innerHTML = '<li style="color:#666;padding:4px 0">No morning tasks yet</li>';
+                return;
+            }
+            tasks.forEach((t, i) =>{
+                const li = document.createElement('li');
+                li.style.display = 'flex';
+                li.style.justifyContent = 'space-between';
+                li.style.alignItems = 'center';
+                li.style.padding = '6px 0';
+                const span = document.createElement('span');
+                span.textContent = t;
+                const del = document.createElement('button');
+                del.textContent = 'Remove';
+                del.style.marginLeft = '8px';
+                del.addEventListener('click', () => {
+                    const d = getOrCreateScheduleData();
+                    d.morning.tasks.splice(i,1);
+                    saveScheduleData(d);
+                    renderMorningTasks();
+                });
+                li.appendChild(span);
+                li.appendChild(del);
+                morningTaskList.appendChild(li);
+            });
+        }
+
+        morningTaskForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const v = morningTaskInput.value.trim();
+            if(!v) return;
+            const data = getOrCreateScheduleData();
+            data.morning.tasks.push(v);
+            saveScheduleData(data);
+            morningTaskInput.value = '';
+            renderMorningTasks();
+        });
+
+        saveSchoolBtn.addEventListener('click', () => {
+            const start = document.getElementById('school-start').value;
+            const end = document.getElementById('school-end').value;
+            if(!start || !end){
+                alert('Please enter both start and end times.');
+                return;
+            }
+            const data = getOrCreateScheduleData();
+            data.school = { start, end };
+            saveScheduleData(data);
+            alert('School hours saved!');
+            validateSchedule();
+            if(window.renderScheduleView) window.renderScheduleView();
+        });
+
+        saveNightBtn.addEventListener('click', () => {
+            const data = getOrCreateScheduleData();
+            data.night = {
+                text: document.getElementById('night-routine-text').value || 'Night Routine',
+                duration: parseFloat(document.getElementById('night-duration').value)
+            };
+            // save sleep time as well
+            const sleepVal = document.getElementById('sleep-time')?.value || '23:00';
+            data.sleepTime = sleepVal;
+            saveScheduleData(data);
+            alert('Night routine saved!');
+            validateSchedule();
+            if(window.renderScheduleView) window.renderScheduleView();
+            // add morning/night tasks into todo list (idempotent)
+            try{
+                addRoutineTasksToTodos(data);
+            }catch(e){ console.warn('Could not add routine tasks to todos', e); }
+        });
+
+        function loadTodos(){
+            try{ return JSON.parse(localStorage.getItem('todoTasks') || '[]'); }catch(e){ return []; }
+        }
+
+        function saveTodos(t){
+            localStorage.setItem('todoTasks', JSON.stringify(t));
+        }
+
+        function addRoutineTasksToTodos(schedule){
+            if(!schedule) schedule = getOrCreateScheduleData();
+            const todos = loadTodos();
+            // night routine task
+            const nightText = schedule.night?.text || 'Night Routine';
+            const sleepParts = (schedule.sleepTime || '23:00').split(':').map(Number);
+            const sleepStart = (sleepParts[0] || 23) + (sleepParts[1]||0)/60;
+            const nightTaskText = `Night: ${nightText}`;
+            const existsNight = todos.some(t => t._recurring === 'night' && t.text === nightTaskText);
+            if(!existsNight){
+                todos.push({ text: nightTaskText, done:false, createdAt: Date.now(), _recurring: 'night', _time: sleepStart - 1 });
+            }
+
+            // morning tasks
+            const morningTasks = schedule.morning?.tasks || [];
+            const morningStart = (sleepStart + 8) % 24;
+            morningTasks.forEach(mt => {
+                const tText = `Morning: ${mt}`;
+                const exists = todos.some(t => t._recurring === 'morning' && t.text === tText);
+                if(!exists){
+                    todos.push({ text: tText, done:false, createdAt: Date.now(), _recurring: 'morning', _time: morningStart });
+                }
+            });
+
+            saveTodos(todos);
+        }
+
+        function validateSchedule(){
+            const data = getOrCreateScheduleData();
+            const warnings = [];
+
+            // Calculate school hours
+            const [sh, sm] = data.school.start.split(':').map(Number);
+            const [eh, em] = data.school.end.split(':').map(Number);
+            const schoolMinutes = (eh * 60 + em) - (sh * 60 + sm);
+            const schoolHours = schoolMinutes / 60;
+
+            // Get total study hours needed from classes (classes.time stored in minutes)
+            let totalStudyHours = 0;
+            try{
+                const classes = JSON.parse(localStorage.getItem('classes') || '[]');
+                classes.forEach(c => {
+                    totalStudyHours += (c.time || 0) / 60;
+                });
+            }catch(e){}
+
+            // Calculate available time
+            const morning = data.morning?.duration || 0.5;
+            const night = data.night?.duration || 1;
+            const sleep = 8; // 8 hours
+            const totalFixed = morning + schoolHours + night + sleep;
+
+            if(totalFixed > 24){
+                warnings.push('⚠️ Schedule is overloaded! Morning + School + Night + Sleep exceeds 24 hours.');
+            }
+
+            const availableForStudy = 24 - totalFixed;
+            if(availableForStudy < totalStudyHours){
+                warnings.push(`⚠️ Not enough time for study! Need ${totalStudyHours.toFixed(1)}hrs but only have ${availableForStudy.toFixed(1)}hrs available.`);
+            } else {
+                warnings.push(`✓ You have ${availableForStudy.toFixed(1)}hrs available for study (need ${totalStudyHours.toFixed(1)}hrs).`);
+            }
+
+            scheduleWarnings.innerHTML = warnings.join('<br>');
+            scheduleWarnings.style.display = 'block';
+        }
+
+        // Render current day schedule inline below calendar heading
+        window.renderScheduleView = function() {
+            const data = getOrCreateScheduleData();
+            const scheduleView = document.getElementById('schedule-view');
+            const scheduleContent = document.getElementById('schedule-content');
+
+            // Get current day of week (0=Sun, 1=Mon, ..., 6=Sat)
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayName = dayNames[dayOfWeek];
+
+            // compute values
+            const morningDur = data.morning?.duration || 0.5;
+            const [sh, sm] = (data.school?.start || '09:00').split(':').map(Number);
+            const [eh, em] = (data.school?.end || '15:00').split(':').map(Number);
+            const schoolStart = sh + sm/60;
+            const schoolEnd = eh + em/60;
+            const schoolHours = Math.max(0, schoolEnd - schoolStart);
+            const nightDur = data.night?.duration || 1;
+            // parse sleep time
+            const sleepParts = (data.sleepTime || '23:00').split(':').map(Number);
+            const sleepStart = (sleepParts[0] || 23) + (sleepParts[1]||0)/60;
+            const sleepDuration = 8; // fixed 8 hours
+
+            const totalStudyHours = (() => {
+                try{
+                    const classes = JSON.parse(localStorage.getItem('classes') || '[]');
+                    // classes store time in minutes; convert to hours
+                    return classes.reduce((sum, c) => sum + (c.time || 0) / 60, 0);
+                }catch(e){ return 0; }
+            })();
+
+            // estimate available study window: from schoolEnd to night routine start (which ends at sleepStart)
+            const nightStart = Math.max(schoolEnd, sleepStart - nightDur);
+            const availableForStudy = Math.max(0, nightStart - schoolEnd);
+            const studyTime = Math.min(availableForStudy, totalStudyHours);
+
+            // Timeblock visual: vertical hours from 6:00 to 24:00
+            const dayStart = 6;
+            const dayEnd = 24;
+            const dayHours = dayEnd - dayStart;
+            const containerHeight = 24 * 30; // px per hour ~30
+
+            // helper to convert hour to px
+            function hourToPx(h){ return ((h - dayStart) / dayHours) * containerHeight; }
+            function durToPx(d){ return (d / dayHours) * containerHeight; }
+
+            let html = `<div style="padding:12px 0; border-top:1px solid #e0e0e0; margin-top:8px;">
+                <div style="font-weight:bold; margin-bottom:8px; font-size:1rem;">Today (${dayName})</div>
+                <div style="position:relative; border:1px solid #e0e0e0; height:${containerHeight}px; background:#fff; border-radius:6px; overflow:hidden;">
+                    <div id="timeline-inner" style="position:absolute; left:0; right:0; top:0; bottom:0;">`;
+
+            // hour grid
+            for(let h = dayStart; h <= dayEnd; h++){
+                const top = hourToPx(h);
+                html += `<div style="position:absolute; left:0; right:0; height:1px; background:#f0f0f0; top:${top}px;"></div>`;
+                html += `<div style="position:absolute; left:4px; font-size:0.75rem; color:#999; top:${top+2}px;">${(h%24).toString().padStart(2,'0')}:00</div>`;
+            }
+
+            // morning block (use sleepStart + 8h)
+            const morningStart = (sleepStart + sleepDuration) % 24;
+            let morningTop = hourToPx(Math.max(morningStart, dayStart));
+            const morningH = morningDur;
+            if(morningStart >= dayStart && morningStart < dayEnd){
+                html += `<div style="position:absolute; left:40px; right:6px; top:${morningTop}px; height:${durToPx(morningH)}px; background:#FFF3CD; border-left:4px solid #FFD54F; padding:6px; box-sizing:border-box; font-size:0.85rem;">Morning (${morningH}h)</div>`;
+            }
+
+            // school block
+            const schoolTop = hourToPx(Math.max(schoolStart, dayStart));
+            const schoolH = Math.max(0, Math.min(schoolEnd, dayEnd) - Math.max(schoolStart, dayStart));
+            if(schoolH > 0){
+                html += `<div style="position:absolute; left:40px; right:6px; top:${schoolTop}px; height:${durToPx(schoolH)}px; background:#E3F2FD; border-left:4px solid #64B5F6; padding:6px; box-sizing:border-box; font-size:0.85rem;">School ${data.school.start} - ${data.school.end}</div>`;
+            }
+
+            // study and class blocks
+            const studyStartHour = Math.max(schoolEnd, dayStart);
+            // class sessions scheduled for this day
+            const classDayIdx = (dayOfWeek + 6) % 7; // map JS day (0=Sun) to our class day index (0=Mon)
+            let scheduledClasses = [];
+            try{
+                const classes = JSON.parse(localStorage.getItem('classes') || '[]');
+                scheduledClasses = classes.filter(c => Array.isArray(c.days) && c.days.includes(classDayIdx));
+            }catch(e){ scheduledClasses = []; }
+
+            // base start for classes: 1 hour after school end
+            let classStartBase = schoolEnd + 1;
+            if(classStartBase < dayStart) classStartBase = dayStart;
+            let currentClassStart = classStartBase;
+            let scheduledHoursTotal = 0;
+
+            // We'll render class blocks after injecting the basic timeline HTML so we can
+            // compute widths and place each class in its own horizontal lane.
+            const classesToRender = [];
+            scheduledClasses.forEach(c => {
+                const durH = (c.time || 0) / 60;
+                const classEnd = currentClassStart + durH;
+                const nightStartHour = Math.max(schoolEnd, sleepStart - nightDur);
+                if(classEnd <= nightStartHour && currentClassStart < dayEnd){
+                    classesToRender.push({ item: c, start: currentClassStart, durH });
+                    currentClassStart += durH;
+                    scheduledHoursTotal += durH;
+                } else {
+                    console.warn('Class could not be scheduled today:', c.name);
+                }
+            });
+
+            // remaining generic study time (not tied to classes)
+            const studyH = Math.min(studyTime/1, Math.max(0, Math.min(dayEnd - studyStartHour, studyTime - scheduledHoursTotal)));
+            if(studyH > 0){
+                const studyTop = hourToPx(Math.max(currentClassStart, studyStartHour));
+                html += `<div style="position:absolute; left:40px; right:6px; top:${studyTop}px; height:${durToPx(studyH)}px; background:#E8F5E9; border-left:4px solid #66BB6A; padding:6px; box-sizing:border-box; font-size:0.85rem;">Study ${studyH.toFixed(1)}h</div>`;
+            }
+
+            // night routine block (ends at sleepStart)
+            const nightStartHour = sleepStart - nightDur;
+            if(nightDur > 0 && nightStartHour < dayEnd && (nightStartHour + nightDur) > dayStart){
+                const nightTop = hourToPx(Math.max(nightStartHour, dayStart));
+                const visibleDur = Math.min(nightDur, dayEnd - Math.max(nightStartHour, dayStart));
+                html += `<div style="position:absolute; left:40px; right:6px; top:${nightTop}px; height:${durToPx(visibleDur)}px; background:#F3E5F5; border-left:4px solid #BA68C8; padding:6px; box-sizing:border-box; font-size:0.85rem;">${data.night?.text || 'Night'} (${nightDur}h)</div>`;
+            }
+
+            // sleep block (8 hours starting at sleepStart)
+            const sleepTop = hourToPx(sleepStart);
+            const sleepH = sleepDuration;
+            if(sleepStart < dayEnd && (sleepStart + sleepH) > dayStart){
+                const visibleTop = hourToPx(Math.max(sleepStart, dayStart));
+                const visibleDur = Math.min(sleepH, dayEnd - Math.max(sleepStart, dayStart));
+                html += `<div style="position:absolute; left:0; right:0; top:${visibleTop}px; height:${durToPx(visibleDur)}px; background:#ECEFF1; opacity:0.95; display:flex; align-items:center; padding-left:8px; box-sizing:border-box; font-size:0.95rem; color:#37474F;">Sleep (${sleepH}h)</div>`;
+            }
+
+            html += `</div></div></div>`;
+
+            scheduleContent.innerHTML = html;
+
+            // Now that the DOM timeline exists, append class blocks into separate lanes
+            (function renderClassLanes(){
+                const inner = document.getElementById('timeline-inner');
+                if(!inner) return;
+                const leftOffset = 40; // px used by left labels/margins
+                const rightOffset = 6;
+                const innerRect = inner.getBoundingClientRect();
+                // available width for lanes
+                const contentWidth = Math.max(200, inner.clientWidth - leftOffset - rightOffset);
+                const maxLanes = Math.min(Math.max(1, classesToRender.length), 4); // cap lanes to 4
+                const laneWidth = Math.floor(contentWidth / maxLanes);
+
+                // simple palette for classes
+                const palette = ['#FFF9C4','#E1F5FE','#E8F5E9','#F3E5F5','#FFF3E0','#EDE7F6'];
+
+                classesToRender.forEach((entry, idx) => {
+                    const c = entry.item;
+                    const startH = entry.start;
+                    const durH = entry.durH;
+                    const laneIdx = idx % maxLanes; // assign lane per class sequentially
+
+                    const top = hourToPx(startH);
+                    const height = durToPx(durH);
+                    const leftPx = leftOffset + laneIdx * laneWidth;
+                    const widthPx = laneWidth - 8; // small gutter
+
+                    const el = document.createElement('div');
+                    el.className = 'class-block';
+                    el.style.position = 'absolute';
+                    el.style.left = leftPx + 'px';
+                    el.style.top = top + 'px';
+                    el.style.width = widthPx + 'px';
+                    el.style.height = height + 'px';
+                    el.style.background = palette[idx % palette.length];
+                    el.style.borderLeft = '4px solid rgba(0,0,0,0.08)';
+                    el.style.padding = '6px';
+                    el.style.boxSizing = 'border-box';
+                    el.style.fontSize = '0.85rem';
+                    el.style.overflow = 'hidden';
+                    el.style.borderRadius = '4px';
+                    el.textContent = `${c.name} (${Math.round(durH*60)}m)`;
+
+                    inner.appendChild(el);
+                });
+            })();
+
+            scheduleView.style.display = 'block';
+        };
+
+        // Init on load
+        heading.addEventListener('click', populateForm, { once: false });
+
+        // Populate form when modal opens (via heading click)
+        document.getElementById('calendar-heading').addEventListener('click', () => {
+            setTimeout(populateForm, 100);
+            if(window.renderScheduleView) window.renderScheduleView();
+        });
+    })();
+
+    // Pomodoro Timer logic
+    (function(){
+        const STORAGE_KEY = 'pomodoroStats';
+        const heading = document.getElementById('pomodoro-heading');
+        const widget = document.getElementById('pomodoro-widget');
+        const timerDisplay = document.getElementById('timer-display');
+        const sessionLabel = document.getElementById('session-label');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const sessionsCount = document.getElementById('sessions-count');
+        const workDurationInput = document.getElementById('work-duration');
+        const breakDurationInput = document.getElementById('break-duration');
+
+        let timerInterval = null;
+        let isRunning = false;
+        let isWorkSession = true;
+        let timeRemaining = 25 * 60; // 25 minutes in seconds
+        let sessionsCompleted = 0;
+
+        function loadStats(){
+            try{
+                return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"sessionsCompleted":0}');
+            }catch(e){ return { sessionsCompleted: 0 }; }
+        }
+
+        function saveStats(){
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ sessionsCompleted }));
+        }
+
+        function updateDisplay(){
+            const mins = Math.floor(timeRemaining / 60);
+            const secs = timeRemaining % 60;
+            timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function playNotification(){
+            // Simple beep using Web Audio API
+            try{
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            }catch(e){ console.log('Notification failed'); }
+        }
+
+        function tick(){
+            timeRemaining--;
+            updateDisplay();
+
+            if(timeRemaining <= 0){
+                playNotification();
+                if(isWorkSession){
+                    sessionsCompleted++;
+                    saveStats();
+                    sessionsCount.textContent = sessionsCompleted;
+                    alert('Work session complete! Time for a break.');
+                    isWorkSession = false;
+                    timeRemaining = breakDurationInput.value * 60;
+                    sessionLabel.textContent = 'Break Time';
+                    sessionLabel.style.color = '#4CAF50';
+                } else {
+                    alert('Break over! Ready for another work session?');
+                    isWorkSession = true;
+                    timeRemaining = workDurationInput.value * 60;
+                    sessionLabel.textContent = 'Work Session';
+                    sessionLabel.style.color = '#666';
+                }
+                isRunning = false;
+                clearInterval(timerInterval);
+                startBtn.textContent = 'Start';
+                updateDisplay();
+            }
+        }
+
+        heading.addEventListener('click', () => {
+            widget.style.display = widget.style.display === 'none' ? 'block' : 'none';
+        });
+
+        startBtn.addEventListener('click', () => {
+            if(!isRunning){
+                isRunning = true;
+                startBtn.textContent = 'Resume';
+                timerInterval = setInterval(tick, 1000);
+            }
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            if(isRunning){
+                isRunning = false;
+                clearInterval(timerInterval);
+                startBtn.textContent = 'Resume';
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            isRunning = false;
+            clearInterval(timerInterval);
+            isWorkSession = true;
+            timeRemaining = workDurationInput.value * 60;
+            sessionLabel.textContent = 'Work Session';
+            sessionLabel.style.color = '#666';
+            startBtn.textContent = 'Start';
+            updateDisplay();
+        });
+
+        workDurationInput.addEventListener('change', () => {
+            if(!isRunning && isWorkSession){
+                timeRemaining = workDurationInput.value * 60;
+                updateDisplay();
+            }
+        });
+
+        breakDurationInput.addEventListener('change', () => {
+            if(!isRunning && !isWorkSession){
+                timeRemaining = breakDurationInput.value * 60;
+                updateDisplay();
+            }
+        });
+
+        // Init
+        const stats = loadStats();
+        sessionsCompleted = stats.sessionsCompleted;
+        sessionsCount.textContent = sessionsCompleted;
+        updateDisplay();
+    })();
+    </script>
+    
+    
+   
+</body>
+</html>
